@@ -1,0 +1,24 @@
+# Utiliser une image de base contenant Python
+FROM python:3.9-slim
+
+# Installer les dépendances nécessaires
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    libtesseract-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Créer et définir le répertoire de travail
+WORKDIR /app
+
+# Copier le fichier requirements.txt et installer les dépendances Python
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copier le code de l'application
+COPY jo.py /app/
+
+# Exposer le port que l'application utilise
+EXPOSE 8000
+
+# Définir la commande par défaut pour exécuter l'application
+CMD ["uvicorn", "jo:app", "--host", "0.0.0.0", "--port", "8000"]
